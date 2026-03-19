@@ -1,0 +1,45 @@
+name: Price Alert Checker
+
+on:
+  schedule:
+    # Runs every 15 minutes, Monday-Friday, 9:30am-4:00pm ET (14:30-21:00 UTC)
+    - cron: '0,15,30,45 14 * * 1-5'   # 14:00-14:45 UTC
+    - cron: '0,15,30,45 15 * * 1-5'   # 15:00-15:45 UTC
+    - cron: '0,15,30,45 16 * * 1-5'   # 16:00-16:45 UTC
+    - cron: '0,15,30,45 17 * * 1-5'   # 17:00-17:45 UTC
+    - cron: '0,15,30,45 18 * * 1-5'   # 18:00-18:45 UTC
+    - cron: '0,15,30,45 19 * * 1-5'   # 19:00-19:45 UTC
+    - cron: '0,15,30,45 20 * * 1-5'   # 20:00-20:45 UTC
+    - cron: '0,15,30,45 21 * * 1-5'   # 21:00-21:45 UTC (covers 4pm ET close)
+  workflow_dispatch: # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  check-alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check price alerts
+        run: |
+          echo "Running price alert check at $(date -u)"
+          
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.VERCEL_APP_URL }}/api/check-alerts")
+          
+          echo "Response status: $RESPONSE"
+          
+          if [ "$RESPONSE" != "200" ]; then
+            echo "Alert check failed with status $RESPONSE"
+            exit 1
+          fi
+          
+          echo "Alert check completed successfully"
+
+      - name: Full response log
+        if: always()
+        run: |
+          curl -s \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.VERCEL_APP_URL }}/api/check-alerts" | head -500

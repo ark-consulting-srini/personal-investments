@@ -1,0 +1,19 @@
+{
+  "crons": [
+    {
+      "path": "/api/weekly-digest",
+      "schedule": "0 13 * * 1"
+    }
+  ],
+  "functions": {
+    "api/claude.js": {
+      "maxDuration": 30
+    },
+    "api/check-alerts.js": {
+      "maxDuration": 30
+    },
+    "api/weekly-digest.js": {
+      "maxDuration": 30
+    }
+  }
+}
