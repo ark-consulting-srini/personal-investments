@@ -1,0 +1,33 @@
+{
+  "crons": [
+    {
+      "path": "/api/weekly-digest",
+      "schedule": "0 13 * * 1"
+    },
+    {
+      "path": "/api/fetch-macro",
+      "schedule": "0 6 * * 0"
+    },
+    {
+      "path": "/api/ingest-research",
+      "schedule": "0 11 * * *"
+    }
+  ],
+  "functions": {
+    "api/claude.js": {
+      "maxDuration": 30
+    },
+    "api/check-alerts.js": {
+      "maxDuration": 30
+    },
+    "api/weekly-digest.js": {
+      "maxDuration": 60
+    },
+    "api/fetch-macro.js": {
+      "maxDuration": 60
+    },
+    "api/ingest-research.js": {
+      "maxDuration": 60
+    }
+  }
+}
